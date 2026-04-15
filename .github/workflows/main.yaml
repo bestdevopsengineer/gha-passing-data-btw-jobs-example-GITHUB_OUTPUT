@@ -1,0 +1,25 @@
+name: Pass Data Between Jobs
+
+on:
+  workflow_dispatch:
+
+jobs:
+  job_a:
+    runs-on: ubuntu-latest
+    outputs:
+      greeting: ${{ steps.set_value.outputs.greeting }}
+
+    steps:
+      - name: Step A - Set output
+        id: set_value
+        run: |
+          echo "greeting=Hello from Job A" >> $GITHUB_OUTPUT
+
+  job_b:
+    runs-on: ubuntu-latest
+    needs: job_a
+
+    steps:
+      - name: Step B - Use output from Job A
+        run: |
+          echo "Job A says: ${{ needs.job_a.outputs.greeting }}"
